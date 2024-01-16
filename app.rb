@@ -38,3 +38,23 @@ get("/random/results") do
 
   erb(:random_results)
 end
+
+get("/payment/new") do
+  erb(:new_payment)
+end
+
+get("/payment/results") do
+  @rate = ((params["APR"].to_f)/100)/12
+  @loan_term = (params["years"].to_i) * 12
+  @present_value = params["principal" ].to_f
+
+  @numerator = @rate * @present_value
+  @denominator = 1 - ((1 + @rate) ** (-1*@loan_term))
+
+  @apr_display = params["APR"].to_f.to_fs(:percentage, {:precision => 4})
+  @years_display = params["years"]
+  @principal_display = params["principal" ].to_f.to_fs(:currency)
+  @payment = (@numerator / @denominator).to_fs(:currency)
+
+  erb(:payment_results)
+end
